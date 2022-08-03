@@ -32,6 +32,9 @@
     python .\manage.py migrate
 
 
+## Version 0.1.1
+* added a search function to the main page
+
 ### Version 0.1
 
 ### TODO:

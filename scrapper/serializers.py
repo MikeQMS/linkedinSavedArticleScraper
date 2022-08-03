@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import Posts
 
 
+# API  Serializer
 class PostsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Posts
