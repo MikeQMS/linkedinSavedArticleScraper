@@ -13,7 +13,16 @@
 
 
 * go to page
+
+    
+    http://127.0.0.1:8000/
+
 * if after the page is loaded, it is empty, you might just refresh the page
+* to call the API use
+
+
+    http://127.0.0.1:8000/api
+
 
 ### Delete and recreate a empty Database file
 * just remove the db.sqlite3 file
