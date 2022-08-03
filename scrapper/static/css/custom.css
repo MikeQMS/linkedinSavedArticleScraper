@@ -1,0 +1,17 @@
+.text_reduction {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+}
+
+.container {
+  justify-content: space-between;
+  flex-direction: column;
+  display: flex;
+}
+.container .btn-holder {
+  position: absolute;
+       bottom: 20px;
+       right: 20px;
+}
