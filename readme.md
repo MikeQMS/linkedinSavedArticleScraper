@@ -12,6 +12,9 @@
     python .\manage.py runserver
 
 
+* go to page
+* if after the page is loaded, it is empty, you might just refresh the page
+
 ### Delete and recreate a empty Database file
 * just remove the db.sqlite3 file
 * then run in terminal
