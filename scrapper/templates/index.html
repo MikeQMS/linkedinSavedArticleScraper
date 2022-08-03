@@ -9,8 +9,12 @@
 </head>
 <body>
 {% load static %}
-<div class="" style="margin: 10px">
-    <a href="/update/" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Load from LinkedIn</a>
+<div class="d-flex align-items-center" style="display: flex; margin: 10px">
+    {% csrf_token %}
+    <form action="/update/" method="post">
+        <button  type="submit" class="btn btn-primary btn-lg active" aria-pressed="true">Load from LinkedIn</button>
+        {{ form }}
+    </form>
 </div>
 {#Searchfield for dynamic search#}
 <div class="form-group" style="max-width: 300px; margin: 10px;">

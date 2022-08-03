@@ -9,22 +9,30 @@ from webdriver_manager.chrome import ChromeDriverManager
 import configparser
 
 
-def run(isSecurityChallange):
+def run(isSecurityChallange, request):
     # set options for chromium webdriver
     options = webdriver.ChromeOptions()
     options.add_argument("disable-popup-blocking")
+    # for Docker
+    #options.add_argument("--disable-gpu")
+    #options.add_argument("--no-sandbox")
 
     # run it as background job, but only works when no captcha check
     if not isSecurityChallange:
         options.add_argument("headless")
 
     # parse configfile with username and password
-    config = configparser.ConfigParser()
-    config.read(os.path.dirname(os.path.abspath(__file__)) + './credentials.ini')
-    username = config['Login']['username']
-    password = config['Login']['password']
+    #config = configparser.ConfigParser()
+    #path = '/'.join((os.path.abspath(__file__).replace('\\', '/')).split('/')[:-1])
+    #config.read(os.path.join(path, 'credentials.ini'))
+    #username = config['Login']['username']
+    #password = config['Login']['password']
+
+    # gets username and password from the form via request.POST
+    username = request["your_name"]
+    password = request["your_password"]
     # create Chrome webdriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) #, executable_path='/usr/bin/chromedriver')
 
     # get to linkedin login page
     driver.get("https://www.linkedin.com/login/")

@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
 from . import scrapper
 from rest_framework import viewsets
 from .serializers import PostsSerializer
-from .models import Posts
+from .models import Posts, LoginForm
 from django.shortcuts import redirect
 import json
 from django.http import JsonResponse
@@ -24,15 +26,25 @@ def search(request):
 # Query database for all posts, if non exist load start scrapper
 def start_page(request):
     queryset = Posts.objects.all()
-    if not queryset:
-        scrapper.run(False)
-    return render(request, "index.html", {'queryset' : queryset})
+    form = LoginForm()
+    # if not queryset:
+    #     scrapper.run(False)
+    return render(request, "index.html", {'queryset' : queryset, 'form' : form})
 
 
 # update the database
+@csrf_exempt
 def get_savedfeed(request):
-    scrapper.run(False)
-    return redirect("/")
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            scrapper.run(False, request.POST)
+            queryset = Posts.objects.all()
+            return render(request, "index.html", {'queryset' : queryset, 'form':form})
+        else:
+            form = LoginForm()
+    return render(request, "index.html", {'form': form})
+
 
 
 # creates api

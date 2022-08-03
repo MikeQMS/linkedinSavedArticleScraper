@@ -4,8 +4,7 @@
 
 
 ## How to use
-* install all required files from pipfile+
-* enter your login information in the credentials.ini
+* install all required files from pipfile / requirements.txt
 * run django in terminal
     
 
@@ -32,6 +31,9 @@
     python .\manage.py migrate
 
 
+## Version 0.1.2
+* login details can be entered on main page
+
 ## Version 0.1.1
 * added a search function to the main page
 
@@ -39,8 +41,7 @@
 
 ### TODO:
 * testing the system with more than 4 articles saved
-* adding this application to docker container
-* take username and password as argument on startup
-* store username and password encrypted in database file
+* adding this application to docker container -> Does not work properly in docker
+
 
 Please let me know when you have further suggestions, requests or bugs. 
