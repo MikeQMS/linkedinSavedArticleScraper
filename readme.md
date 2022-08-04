@@ -4,6 +4,22 @@
 
 
 ## How to use
+
+### Docker
+
+* Just pull and run the docker container
+
+    
+    docker pull mikeqms/linkedinsavedarticlescraper:latest
+    docker run -p 8000:8000 mikeqms/linkedinsavedarticlescraper
+
+* to access the application enter in your browser (when the container runs in docker)
+
+
+    http://127.0.0.1:8000
+
+
+### Within IDE (i used Pycharm)
 * install all required files from pipfile / requirements.txt
 * run django in terminal
     
@@ -23,6 +39,8 @@
     http://127.0.0.1:8000/api
 
 
+
+
 ### Delete and recreate a empty Database file
 * just remove the db.sqlite3 file
 * then run in terminal
@@ -30,6 +48,9 @@
 
     python .\manage.py migrate
 
+
+## Version 0.1.3
+* dockerized the application
 
 ## Version 0.1.2
 * login details can be entered on main page
@@ -41,7 +62,7 @@
 
 ### TODO:
 * testing the system with more than 4 articles saved
-* adding this application to docker container -> Does not work properly in docker
+* still some issues inside the docker container especially when it comes to the linkedin challenge
 
 
 Please let me know when you have further suggestions, requests or bugs. 

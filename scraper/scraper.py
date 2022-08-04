@@ -7,36 +7,44 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import configparser
+import platform
 
 
-def run(isSecurityChallange, request):
+def run(is_security_challange, request):
     # set options for chromium webdriver
     options = webdriver.ChromeOptions()
     options.add_argument("disable-popup-blocking")
-    # for Docker
-    #options.add_argument("--disable-gpu")
-    #options.add_argument("--no-sandbox")
 
-    # run it as background job, but only works when no captcha check
-    if not isSecurityChallange:
+    # if no security challenge, start headless browser
+    if not is_security_challange:
         options.add_argument("headless")
 
+    # Options for Docker Container under Linux
+    if platform.system() == "Linux":
+        options.add_argument('--ignore-ssl-errors=yes')
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        # create Chrome webdriver in Docker under linux
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),
+                                  options=options, executable_path='/usr/bin/chromedriver')
+    else:
+        # create Chrome webdriver
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
     # parse configfile with username and password
-    #config = configparser.ConfigParser()
-    #path = '/'.join((os.path.abspath(__file__).replace('\\', '/')).split('/')[:-1])
-    #config.read(os.path.join(path, 'credentials.ini'))
-    #username = config['Login']['username']
-    #password = config['Login']['password']
+    # config = configparser.ConfigParser()
+    # path = '/'.join((os.path.abspath(__file__).replace('\\', '/')).split('/')[:-1])
+    # config.read(os.path.join(path, 'credentials.ini'))
+    # username = config['Login']['username']
+    # password = config['Login']['password']
 
     # gets username and password from the form via request.POST
     username = request["your_name"]
     password = request["your_password"]
-    # create Chrome webdriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) #, executable_path='/usr/bin/chromedriver')
-
     # get to linkedin login page
-    driver.get("https://www.linkedin.com/login/")
-
+    driver.get("https://www.linkedin.com/login/de")
     # pass username and password to form and click button
     username_field = driver.find_element(By.ID, "username")
     password_field = driver.find_element(By.ID, "password")
@@ -51,42 +59,41 @@ def run(isSecurityChallange, request):
         if button.text == "Einloggen":
             button.click()
             break
-    if driver.current_url.startswith("https://www.linkedin.com/checkpoint/challenge") == True and isSecurityChallange == False:
+    if driver.current_url.startswith(
+            "https://www.linkedin.com/checkpoint/challenge") == True and is_security_challange == False:
         run(True)
     # When there is a challenge while login, the programm will remain until captcha is manually solved
     while driver.current_url.startswith("https://www.linkedin.com/checkpoint/challenge"):
         continue
-
     # page with the posts to be scraped
     driver.get("https://www.linkedin.com/my-items/saved-posts/")
     articles = driver.find_elements(By.CLASS_NAME, "entity-result")
     articleCollector = []
     for article in articles:
-        #get the profile image URL
+        # get the profile image URL
         container = article.find_element(By.CLASS_NAME, "entity-result__content-image")
         image = container.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
 
-        #Get name of whom shared the article
+        # Get name of whom shared the article
         actor = article.find_element(By.XPATH, ".//span[@dir]/span[@aria-hidden]")
 
-        #get the Subtitle / Article desciption
+        # get the Subtitle / Article desciption
         contentActor = article.find_element(By.CLASS_NAME, "entity-result__content-actor")
         subtitle = contentActor.find_element(By.CLASS_NAME, "entity-result__primary-subtitle")
 
-        #get the name of who shared the article
+        # get the name of who shared the article
         shared = contentActor.find_element(By.CSS_SELECTOR, "p")
 
-        #get the content image URL
+        # get the content image URL
         content = article.find_element(By.CLASS_NAME, "entity-result__content-inner-container")
         contentImage = content.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
 
-        #get the content summary
+        # get the content summary
         contentContainer = content.find_element(By.CLASS_NAME, "entity-result__content-summary")
         contentSummary = contentContainer.find_element(By.CSS_SELECTOR, "span")
 
-        #get the content link
+        # get the content link
         contentLink = content.find_element(By.CLASS_NAME, "app-aware-link").get_attribute("href")
-
 
         # For local testing purpose only
         if __name__ == "__main__":
@@ -100,13 +107,14 @@ def run(isSecurityChallange, request):
                     self.contentImage = contentImage
                     self.contentLink = contentLink
                     self.contentSummary = contentSummary
+
             articleCollector.append(
-            SavedPost(image, actor.text, subtitle.text, shared.text, contentImage, contentSummary.text, contentLink))
-            print(articleCollector.__str__())
+                SavedPost(image, actor.text, subtitle.text, shared.text, contentImage, contentSummary.text,
+                          contentLink))
         else:
             # creates a django model
-            post = Posts(image=image, title=actor.text, subtitle=subtitle.text, shared_by=shared.text, content_image=contentImage,
-                     content_link=contentLink, content_summary=contentSummary.text)
+            post = Posts(image=image, title=actor.text, subtitle=subtitle.text, shared_by=shared.text,
+                         content_image=contentImage, content_link=contentLink, content_summary=contentSummary.text)
             # checks if article link already in database
             if not Posts.objects.all().filter(content_link=contentLink):
                 # saves post to database if not exists

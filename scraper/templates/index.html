@@ -21,10 +21,10 @@
     <input type="text" class="form-control" id="searchField" placeholder="Search">
 </div>
 {#Div to display all database entries#}
-<div class="scrapper-output">
-    <div class="d-flex flex-row flex-wrap" style="padding: 20px; flex: 1 0 21%;">
+<div class="scraper-output">
+    <div class="d-flex align-items-stretch flex-row flex-wrap" style="padding: 10px; flex: 1 0 21%;">
     {% for post in queryset %}
-    <div class="card" style="width: 25rem; margin-right: 20px;" >
+    <div class="card" style="width: 25rem; margin: 10px;" >
       <img class="card-img-top" src="{{ post.content_image }}" style="width: 90%">
       <div class="card-body">
           <div style="display: flex; padding: 2px">
@@ -47,6 +47,9 @@
 
 {#Div for the search output#}
 <div class="output">
+    <div class="inner-output d-flex align-items-stretch flex-row flex-wrap" style="padding: 10px; flex: 1 0 21%;">
+
+    </div>
 
 </div>
 

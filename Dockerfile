@@ -33,6 +33,8 @@ COPY . $DockerHOME
 RUN pipenv sync
 
 RUN pip install -r requirements.txt
+
+RUN python3 manage.py migrate
 # port where the Django app runs
 EXPOSE 8000
 # start server
