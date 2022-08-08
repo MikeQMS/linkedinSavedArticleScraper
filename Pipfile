@@ -9,7 +9,6 @@ django-debug-toolbar = "*"
 selenium = "*"
 webdriver-manager = "*"
 mysqlclient = "*"
-djangorestframework-jsonapi = "*"
 djangorestframework = "*"
 
 [dev-packages]

@@ -12,10 +12,12 @@ WORKDIR $DockerHOME
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN apt-get update
+
 RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee -a /etc/apt/sources.list
-RUN apt-get install wget
+RUN apt-get -y install wget
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
-RUN apt-get install gnupg
+RUN apt-get -y install gnupg
 RUN apt-key add linux_signing_key.pub
 RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
@@ -23,14 +25,14 @@ RUN apt-get install -y google-chrome-stable
 RUN apt-get install -yqq unzip curl
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/bin/
-
+RUN pip install --upgrade pip
 # install dependencies
 RUN pip install pipenv
 
 # copy whole project to your docker home directory.
 COPY . $DockerHOME
 
-RUN pipenv sync
+#RUN pipenv sync
 
 RUN pip install -r requirements.txt
 

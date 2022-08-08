@@ -5,7 +5,7 @@ from . import scraper
 from rest_framework import viewsets
 from .serializers import PostsSerializer
 from .models import Posts, LoginForm
-from django.shortcuts import redirect
+# from django.shortcuts import redirect
 import json
 from django.http import JsonResponse
 
