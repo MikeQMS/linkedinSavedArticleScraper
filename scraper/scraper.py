@@ -1,4 +1,6 @@
 # import os
+import configparser
+import os
 
 # import django
 # django.setup()
@@ -10,7 +12,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import platform
 
 
-def run(is_security_challange, request):
+def run(is_security_challange, request=0):
     # set options for chromium webdriver
     options = webdriver.ChromeOptions()
     options.add_argument("disable-popup-blocking")
@@ -33,16 +35,17 @@ def run(is_security_challange, request):
         # create Chrome webdriver
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    # parse configfile with username and password
-    # config = configparser.ConfigParser()
-    # path = '/'.join((os.path.abspath(__file__).replace('\\', '/')).split('/')[:-1])
-    # config.read(os.path.join(path, 'credentials.ini'))
-    # username = config['Login']['username']
-    # password = config['Login']['password']
-
-    # gets username and password from the form via request.POST
-    username = request["your_name"]
-    password = request["your_password"]
+    if request==0:
+        #parse configfile with username and password
+        config = configparser.RawConfigParser()
+        path = '/'.join((os.path.abspath(__file__).replace('\\', '/')).split('/')[:-1])
+        config.read(os.path.join(path, 'credentials.ini'))
+        username = config['Login']['username']
+        password = config['Login']['password']
+    else:
+        # gets username and password from the form via request.POST
+        username = request["your_name"]
+        password = request["your_password"]
     # get to linkedin login page
     driver.get("https://www.linkedin.com/login/de")
     # pass username and password to form and click button
@@ -90,7 +93,7 @@ def run(is_security_challange, request):
 
         # get the content summary
         contentContainer = content.find_element(By.CLASS_NAME, "entity-result__content-summary")
-        contentSummary = contentContainer.find_element(By.CSS_SELECTOR, "span")
+        contentSummary = contentContainer.text
 
         # get the content link
         contentLink = content.find_element(By.CLASS_NAME, "app-aware-link").get_attribute("href")
@@ -109,12 +112,12 @@ def run(is_security_challange, request):
                     self.contentSummary = contentSummary
 
             articleCollector.append(
-                SavedPost(image, actor.text, subtitle.text, shared.text, contentImage, contentSummary.text,
+                SavedPost(image, actor.text, subtitle.text, shared.text, contentImage, contentSummary,
                           contentLink))
         else:
             # creates a django model
             post = Posts(image=image, title=actor.text, subtitle=subtitle.text, shared_by=shared.text,
-                         content_image=contentImage, content_link=contentLink, content_summary=contentSummary.text)
+                         content_image=contentImage, content_link=contentLink, content_summary=contentSummary)
             # checks if article link already in database
             if not Posts.objects.all().filter(content_link=contentLink):
                 # saves post to database if not exists
@@ -123,6 +126,6 @@ def run(is_security_challange, request):
 
 
 if __name__ == "__main__":
-    run(False)
+    run(True, request=0)
 else:
     from .models import Posts

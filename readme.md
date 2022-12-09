@@ -48,6 +48,10 @@
 
     python .\manage.py migrate
 
+## Version 0.1.4
+* fixed a page collector due to change of HTML syntax on linkedin
+* added scraper.py run functionality without django in cooperation with credentials.ini
+* when running just scraper.py, the headless option is disabled
 
 ## Version 0.1.3
 * dockerized the application
